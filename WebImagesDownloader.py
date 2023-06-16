@@ -1,14 +1,19 @@
-import requests
-from bs4 import BeautifulSoup
-import os
-from urllib.parse import urljoin, urlparse
-import re
+#Este script de Python descarga imágenes desde una página web especificada por el usuario. Utiliza las bibliotecas requests y BeautifulSoup para obtener el contenido HTML de la página y encontrar las etiquetas de imagen. Luego, descarga cada imagen encontrada y las guarda en un directorio específico en el sistema de archivos local
 
+import requests #para realizar solicitudes HTTP
+from bs4 import BeautifulSoup #para analizar el contenido HTML de la página web
+import os #para trabajar con directorios y rutas de archivo
+from urllib.parse import urljoin, urlparse #para manipular y analizar URLs
+import re #para trabajar con expresiones regulares
+
+#FUNCIONES AUXILIARES:
 def limpiar_nombre_archivo(nombre_archivo):
+    '''Esta función toma un nombre de archivo y utiliza una expresión regular para eliminar cualquier carácter que no sea alfanumérico, punto, guión bajo o guión. Retorna el nombre de archivo limpio.'''
     nombre_archivo = re.sub(r'[^a-zA-Z0-9_.-]', '_', nombre_archivo)
     return nombre_archivo
 
 def obtener_extension(url):
+    '''Esta función toma una URL y devuelve la extensión del archivo en la URL. Utiliza la función os.path.basename para obtener el nombre de archivo de la URL y luego os.path.splitext para obtener la extensión. Si la extensión es válida (en este caso, .jpg, .jpeg, .png o .gif), se devuelve esa extensión. De lo contrario, se devuelve ".jpg" como extensión predeterminada.'''
     extensiones_validas = ['.jpg', '.jpeg', '.png', '.gif']
     nombre_archivo = os.path.basename(urlparse(url).path)
     extension = os.path.splitext(nombre_archivo)[1].lower()
@@ -17,6 +22,7 @@ def obtener_extension(url):
     return '.jpg'  # Extensión predeterminada si no es reconocida
 
 def descargar_imagenes(url):
+    '''Esta función realiza la descarga de las imágenes desde la página web especificada'''
     try:
         # Realizar solicitud HTTP a la página web
         response = requests.get(url)
@@ -70,9 +76,10 @@ def descargar_imagenes(url):
     except requests.exceptions.RequestException as e:
         print("Ocurrió un error al descargar las imágenes:", str(e))
 
+#FUNCION PRINCIPAL
 def main():
     url = input("Ingresa la dirección de la página web: ")
     descargar_imagenes(url)
 
-if __name__ == '__main__':
+if __name__ == '__main__': #Este bloque asegura que el código dentro de él solo se ejecute si el script se ejecuta directamente y no se importa como un módulo. Esto permite que el código dentro de la función main() se ejecute cuando el script se ejecuta desde la línea de comandos. En este caso, el usuario es solicitado a ingresar la dirección de la página web y luego se llama a la función descargar_imagenes(url) para iniciar la descarga de imágenes.
     main()
